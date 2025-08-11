@@ -1,0 +1,11 @@
+## Simple Geometry
+
+Calculates distance between points, vertex of 2 lines and more using p5.js 
+
+## Convex Hull
+
+Creates a convex hull using different algorithms 
+
+## Triangulation
+
+Creates triangulations using different algorithms 
