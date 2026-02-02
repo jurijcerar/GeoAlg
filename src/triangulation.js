@@ -4,7 +4,7 @@ function hamilton_triangulation(){
   // Based on "Hamiltonian triangulations for fast rendering" (1994)
   
   let lines = [];
-  let N = points.length;
+  let N =state.points.length;
   let H = hull.length;
   
   stroke('purple');
@@ -20,7 +20,7 @@ function hamilton_triangulation(){
   
   stroke('black');
   
-  // For convex hull only (no interior points), use simple fan triangulation
+  // For convex hull only (no interiorstate.points), use simple fan triangulation
   if (N === H) {
     if (hull.length > 3) {
       for (let i = 2; i < hull.length; i++) {
@@ -31,7 +31,7 @@ function hamilton_triangulation(){
     return;
   }
   
-  // Build visibility graph for all points
+  // Build visibility graph for allstate.points
   let visGraph = buildVisibilityGraph(points, hull);
   
   // Dynamic Programming approach
@@ -93,7 +93,7 @@ function hamilton_triangulation(){
   for (let i = 0; i < N; i++) {
     for (let j = i + 1; j < N; j++) {
       if (visGraph[i][j]) {
-        visibleEdges.push({a: points[i], b: points[j], dist: euk_dist(points[i], points[j])});
+        visibleEdges.push({a:state.points[i], b:state.points[j], dist: euk_dist(points[i],state.points[j])});
       }
     }
   }
@@ -116,15 +116,15 @@ function hamilton_triangulation(){
 
 // Helper function to build visibility graph
 function buildVisibilityGraph(points, hull) {
-  let N = points.length;
+  let N =state.points.length;
   let visGraph = Array(N).fill(null).map(() => Array(N).fill(false));
   
-  // All points can see each other (simplified - in reality we'd check for obstacles)
+  // Allstate.points can see each other (simplified - in reality we'd check for obstacles)
   // For a point set without obstacles, visibility is just line-of-sight
   for (let i = 0; i < N; i++) {
     for (let j = i + 1; j < N; j++) {
       // Check if line segment (i,j) is valid
-      let edge = {a: points[i], b: points[j]};
+      let edge = {a:state.points[i], b:state.points[j]};
       let visible = true;
       
       // Simple visibility: check if edge doesn't cross hull edges (except at endpoints)
@@ -137,9 +137,9 @@ function buildVisibilityGraph(points, hull) {
   return visGraph;
 }
 
-// Helper to find index of a point in points array
+// Helper to find index of a point instate.points array
 function findPointIndex(p) {
-  for (let i = 0; i < points.length; i++) {
+  for (let i = 0; i <state.points.length; i++) {
     if (abs(points[i].x - p.x) < 0.01 && abs(points[i].y - p.y) < 0.01) {
       return i;
     }
@@ -164,8 +164,8 @@ function edgeKey(a, b) {
 function greedy_triangulation(){
   let lines = [];
 
-  for (let i = 0; i < points.length; i++) {
-    for (let j = i+1; j < points.length; j++) {
+  for (let i = 0; i <state.points.length; i++) {
+    for (let j = i+1; j <state.points.length; j++) {
       lines.push({a:points[i], b:points[j]}); 
     }
   }
@@ -174,7 +174,7 @@ function greedy_triangulation(){
   triangulation.push(lines[0]);
 
   line(triangulation[0].a.x,triangulation[0].a.y,triangulation[0].b.x,triangulation[0].b.y);
-  let n = points.length;
+  let n =state.points.length;
   //grahams_scan();
   stroke('black');
   let k = hull.length;

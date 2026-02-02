@@ -1,3 +1,6 @@
-let points = [];
-let hull = [];
-let triangulation = [];
+let state = {
+  points: [],
+  edges: [],
+  triangulation: [],
+  slider: null
+};

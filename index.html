@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js" integrity="sha512-b/htz6gIyFi3dwSoZ0Uv3cuv3Ony7EeKkacgrcVg8CMzu90n777qveu0PBcbZUA7TzyENGtU+qZRuFAkfqgyoQ==" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8" />
 
-  </head>
-  <body>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+
+</head>
+
+<body>
   <div id="app">
     <div id="canvas-container"></div>
 
     <div id="controls">
       <h2>Point Generation</h2>
       <label>
-        Number of points
+        Number ofstate.points
         <input id="numPoints" type="number" value="50" min="3">
       </label>
 
@@ -43,11 +44,9 @@
   </div>
 
   <script src="src/state.js"></script>
-<script src="src/utils.js"></script>
-<script src="src/pointGen.js"></script>
-<script src="src/convexHull.js"></script>
-<script src="src/triangulation.js"></script>
-<script src="src/sketch.js"></script>
+  <script src="src/sketch.js"></script>
+  <script src="src/pointGen.js"></script>
+  <script src="src/jarvis.js"></script>
 
 </body>
 

@@ -1,31 +1,28 @@
 function setup() {
   let c = createCanvas(1200, 800);
   c.parent("canvas-container");
-  strokeWeight(2);
+
+  state.slider = createSlider(0, 0, 0, 1); // min, max, initial, step
+  state.slider.parent(document.getElementById("controls"));
 
   document.getElementById("evenBtn").onclick = even_dist;
   document.getElementById("gaussBtn").onclick = gauss_dist;
   document.getElementById("runHull").onclick = run_hull;
-  document.getElementById("runTri").onclick = run_triangulation;
+  //document.getElementById("runTri").onclick = run_triangulation;
 }
 
+
 function run_hull() {
-  //clear();
-  hull = [];
+
+  state.edges = [];
 
   let algo = document.getElementById("hullAlgo").value;
   if (algo === "graham") grahams_scan();
   else if (algo === "quick") quick_hull();
   else jarvis_march();
 
-  stroke("purple");
-  for (let i = 1; i < hull.length; i++) {
-    line(hull[i-1].x, hull[i-1].y, hull[i].x, hull[i].y);
-  }
-
-  line(hull[hull.length-1].x, hull[hull.length-1].y,
-     hull[0].x, hull[0].y);
-
+  state.slider.attribute("max", state.edges.length);
+  state.slider.value(state.edges.length);
 }
 
 function run_triangulation() {
@@ -36,7 +33,14 @@ function run_triangulation() {
   else hamilton_triangulation();
 }
 
-
 function draw() {
-
+  clear();
+  draw_points();
+  let n = state.slider.value();
+  stroke("purple");
+  strokeWeight(2);
+  for (let i = 0; i < n; i++) {
+    line(state.edges[i].a.x, state.edges[i].a.y, state.edges[i].b.x, state.edges[i].b.y);
+  }
 }
+

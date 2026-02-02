@@ -1,25 +1,17 @@
-function create_point(p){ 
-  points.push(p);
-  strokeWeight(4);
-  stroke('red');
-  point(p.x,p.y);
-}
 
 function even_dist() {
-  clear();
-  points = [];
+  state.points = [];
 
   const n = +document.getElementById("numPoints").value;
 
   for (let i = 0; i < n; i++) {
     let p = createVector(random(width), random(height));
-    create_point(p);
+    state.points.push(p);
   }
 }
 
 function gauss_dist() {
-  clear();
-  points = [];
+  state.points = [];
 
   const n = +document.getElementById("numPoints").value;
 
@@ -29,7 +21,15 @@ function gauss_dist() {
       randomGaussian(height / 2, 70)
     );
     if (p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height) {
-      create_point(p);
+      state.points.push(p);
     } else i--;
+  }
+}
+
+function draw_points() {
+  stroke('red');
+  strokeWeight(4);
+  for (let p of state.points) {
+    point(p.x, p.y);
   }
 }

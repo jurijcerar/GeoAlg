@@ -2,10 +2,6 @@ function equals(a, b) {
   return abs(a - b) < 1e-9;
 }
 
-function euk_dist(a,b){
-  return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
-}
-
 function distance_compare(a,b){
   return euk_dist(a.a,a.b) - euk_dist(b.a,b.b);
 }
@@ -52,64 +48,60 @@ function distToSegment(p, a, b) {
 function get_min_E(){
   var min = 1200;
   var E,j;
-  for (var i = 0; i < points.length; i++ ){
-    if(min > points[i].x){
-      min = points[i].x;
-      E = points[i];
+  for (var i = 0; i <state.points.length; i++ ){
+    if(min >state.points[i].x){
+      min =state.points[i].x;
+      E =state.points[i];
       j = i;
     }
   }
-  points.splice(j, 1);
+ state.points.splice(j, 1);
   return E;
 }
 
 function get_max_E(){
   var max = 0;
   var E,j;
-  for (var i = 0; i < points.length; i++ ){
-    if(max < points[i].x){
-      max = points[i].x;
-      E = points[i];
+  for (var i = 0; i <state.points.length; i++ ){
+    if(max <state.points[i].x){
+      max =state.points[i].x;
+      E =state.points[i];
       j = i;
     }
   }
-  points.splice(j, 1);
+ state.points.splice(j, 1);
   return E;
 }
 
 function get_S1(){
   var E = get_min_E();
   var j;
-  var s1 = points[0];
+  var s1 =state.points[0];
   var vy = createVector(0,1);
   var minangle = angle(vy,s1);
-  for (var i = 1; i < points.length; i++){
-    var vs = points[i].copy().sub(E);
+  for (var i = 1; i <state.points.length; i++){
+    var vs =state.points[i].copy().sub(E);
     var newangle= angle(vy,vs);
     if(newangle < minangle){
-      s1 = points[i];
+      s1 =state.points[i];
       j = i;
       minangle = newangle;
     }
     else if(equals(newangle, minangle)){
       if(euk_dist(E,s1) > euk_dist(E,points[i])){
-        s1 = points[i];
+        s1 =state.points[i];
         j = i;  
       }
     }
   }
   hull.push(E);
   hull.push(s1);
-  points.splice(j,1);
-  points.push(E);
+ state.points.splice(j,1);
+ state.points.push(E);
   return E;
 }
 
-function orientation(p, q, r) {
-  return p5.Vector
-    .cross(q.copy().sub(p), r.copy().sub(p))
-    .z;
-}
+
 function distToLine(a, b, p) {
   // distance from point p to line a-b
   return abs(p5.Vector.cross(b.copy().sub(a), p.copy().sub(a)).z);
