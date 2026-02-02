@@ -176,6 +176,7 @@ function greedy_triangulation(){
   line(triangulation[0].a.x,triangulation[0].a.y,triangulation[0].b.x,triangulation[0].b.y);
   let n = points.length;
   //grahams_scan();
+  stroke('black');
   let k = hull.length;
   let i = 1;
   while(triangulation.length < 3*n-3-k){
