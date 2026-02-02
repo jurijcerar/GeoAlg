@@ -1,7 +1,8 @@
 
 function even_dist() {
   state.points = [];
-
+  state.edges = [];
+state.slider.value(0);
   const n = +document.getElementById("numPoints").value;
 
   for (let i = 0; i < n; i++) {
@@ -12,7 +13,8 @@ function even_dist() {
 
 function gauss_dist() {
   state.points = [];
-
+  state.edges = [];
+state.slider.value(0);
   const n = +document.getElementById("numPoints").value;
 
   for (let i = 0; i < n; i++) {
@@ -26,10 +28,3 @@ function gauss_dist() {
   }
 }
 
-function draw_points() {
-  stroke('red');
-  strokeWeight(4);
-  for (let p of state.points) {
-    point(p.x, p.y);
-  }
-}

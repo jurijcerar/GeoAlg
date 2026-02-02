@@ -2,113 +2,62 @@ function equals(a, b) {
   return abs(a - b) < 1e-9;
 }
 
+function addEdge(a, b) {
+    state.edges.push({ a: a.copy(), b: b.copy() });
+    console.log(`Edge added: (${a.x},${a.y}) -> (${b.x},${b.y})`);
+}
+
+function draw_points() {
+  stroke('red');
+  strokeWeight(4);
+  for (let p of state.points) {
+    point(p.x, p.y);
+  }
+}
+
+function euk_dist(a, b) {
+  return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
+}
+
 function distance_compare(a,b){
   return euk_dist(a.a,a.b) - euk_dist(b.a,b.b);
 }
 
-function check_crossing(lines,triangulation){
-  for(let j = 0; j < triangulation.length; j++){
+function orient(a, b, c) {
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
 
-    let D = (lines.b.x - lines.a.x) * (triangulation[j].b.y - triangulation[j].a.y) - (triangulation[j].b.x - triangulation[j].a.x) * (lines.b.y - lines.a.y);
-    let A = (triangulation[j].b.x - triangulation[j].a.x) * (lines.a.y - triangulation[j].a.y) -  (lines.a.x - triangulation[j].a.x) * (triangulation[j].b.y - triangulation[j].a.y);
-    let B = (lines.b.x - lines.a.x) * (lines.a.y - triangulation[j].a.y) - (lines.a.x - triangulation[j].a.x) * (lines.b.y - lines.a.y);
+function segmentsIntersect(a, b, c, d) {
+  let o1 = orient(a, b, c);
+  let o2 = orient(a, b, d);
+  let o3 = orient(c, d, a);
+  let o4 = orient(c, d, b);
 
-    if (equals(D, 0) && equals(A, 0) && equals(B, 0)) {
-      return false; // soupadajo
-    }
+  return o1 * o2 < 0 && o3 * o4 < 0;
+}
 
-    if(equals(D,0)){
-      continue;
-    }
+function check_crossing(candidate, triangulation) {
+  for (let e of triangulation) {
 
-    var Ua = A/D;
-    var Ub = B/D;
+    if (
+      candidate.a === e.a ||
+      candidate.a === e.b ||
+      candidate.b === e.a ||
+      candidate.b === e.b
+    ) continue;
 
-    if (equals(Ua, 1) || equals(Ua, 0) || equals(Ub, 1) || equals(Ub, 0)) {
-      continue;
-    }
-
-    if(Ua > 0 && Ua < 1 && Ub > 0 && Ub < 1 ){
+    if (segmentsIntersect(candidate.a, candidate.b, e.a, e.b)) {
       return false;
     }
-  
   }
-  //line(lines.a.x,lines.a.y,lines.b.x,lines.b.y);
   return true;
 }
 
-function distToSegment(p, a, b) {
-  let ab = b.copy().sub(a);
-  let ap = p.copy().sub(a);
-  let t = constrain(ap.dot(ab) / ab.dot(ab), 0, 1);
-  let closest = a.copy().add(ab.mult(t));
-  return euk_dist(p, closest);
-}
-
-function get_min_E(){
-  var min = 1200;
-  var E,j;
-  for (var i = 0; i <state.points.length; i++ ){
-    if(min >state.points[i].x){
-      min =state.points[i].x;
-      E =state.points[i];
-      j = i;
-    }
-  }
- state.points.splice(j, 1);
-  return E;
-}
-
-function get_max_E(){
-  var max = 0;
-  var E,j;
-  for (var i = 0; i <state.points.length; i++ ){
-    if(max <state.points[i].x){
-      max =state.points[i].x;
-      E =state.points[i];
-      j = i;
-    }
-  }
- state.points.splice(j, 1);
-  return E;
-}
-
-function get_S1(){
-  var E = get_min_E();
-  var j;
-  var s1 =state.points[0];
-  var vy = createVector(0,1);
-  var minangle = angle(vy,s1);
-  for (var i = 1; i <state.points.length; i++){
-    var vs =state.points[i].copy().sub(E);
-    var newangle= angle(vy,vs);
-    if(newangle < minangle){
-      s1 =state.points[i];
-      j = i;
-      minangle = newangle;
-    }
-    else if(equals(newangle, minangle)){
-      if(euk_dist(E,s1) > euk_dist(E,points[i])){
-        s1 =state.points[i];
-        j = i;  
-      }
-    }
-  }
-  hull.push(E);
-  hull.push(s1);
- state.points.splice(j,1);
- state.points.push(E);
-  return E;
-}
-
-
 function distToLine(a, b, p) {
-  // distance from point p to line a-b
   return abs(p5.Vector.cross(b.copy().sub(a), p.copy().sub(a)).z);
 }
 
 function side(a, b, p) {
-  // returns 1 if p is left of a-b, -1 if right, 0 if collinear
   let val = p5.Vector.cross(b.copy().sub(a), p.copy().sub(a)).z;
   if (val > 0) return 1;
   if (val < 0) return -1;

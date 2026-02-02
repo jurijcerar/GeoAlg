@@ -15,7 +15,7 @@
     <div id="controls">
       <h2>Point Generation</h2>
       <label>
-        Number ofstate.points
+        Number of points
         <input id="numPoints" type="number" value="50" min="3">
       </label>
 
@@ -37,16 +37,21 @@
       <h2>Triangulation</h2>
       <select id="triAlgo">
         <option value="greedy">Greedy</option>
-        <option value="hamilton">Hamilton</option>
+        <option value="bw">Bowyer–Watson</option>
       </select>
       <button id="runTri">Run triangulation</button>
     </div>
   </div>
 
   <script src="src/state.js"></script>
-  <script src="src/sketch.js"></script>
+  <script src="src/sketch.js"></script> 
   <script src="src/pointGen.js"></script>
-  <script src="src/jarvis.js"></script>
+  <script src="src/convex/jarvis.js"></script>
+  <script src="src/convex/graham.js"></script>
+  <script src="src/convex/quick.js"></script>
+  <script src="src/triangulation/greedy.js"></script>
+  <script src="src/triangulation/bw.js"></script>
+  <script src="src/utils.js"></script>
 
 </body>
 

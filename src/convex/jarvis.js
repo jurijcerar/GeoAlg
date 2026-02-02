@@ -6,10 +6,6 @@ function triplet_orientation(p, q, r) {
     .z;
 }
 
-function euk_dist(a, b) {
-  return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
-}
-
 function jarvis_march() {
 
   if (state.points.length < 3) return;
@@ -43,8 +39,7 @@ function jarvis_march() {
       }
     }
 
-    state.edges.push({ a: current.copy(), b: next.copy() });
-
+    addEdge(current, next);
 
     current = next;
 
