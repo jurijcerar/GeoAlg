@@ -41,6 +41,14 @@ function check_crossing(lines,triangulation){
   return true;
 }
 
+function distToSegment(p, a, b) {
+  let ab = b.copy().sub(a);
+  let ap = p.copy().sub(a);
+  let t = constrain(ap.dot(ab) / ab.dot(ab), 0, 1);
+  let closest = a.copy().add(ab.mult(t));
+  return euk_dist(p, closest);
+}
+
 function get_min_E(){
   var min = 1200;
   var E,j;
