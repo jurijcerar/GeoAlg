@@ -8,6 +8,47 @@
 
   </head>
   <body>
-    <script src="sketch.js"></script>
-  </body>
+  <div id="app">
+    <div id="canvas-container"></div>
+
+    <div id="controls">
+      <h2>Point Generation</h2>
+      <label>
+        Number of points
+        <input id="numPoints" type="number" value="50" min="3">
+      </label>
+
+      <button id="evenBtn">Even distribution</button>
+      <button id="gaussBtn">Gaussian distribution</button>
+
+      <hr>
+
+      <h2>Convex Hull</h2>
+      <select id="hullAlgo">
+        <option value="graham">Graham scan</option>
+        <option value="jarvis">Jarvis march</option>
+        <option value="quick">Quick Hull</option>
+      </select>
+      <button id="runHull">Run convex hull</button>
+
+      <hr>
+
+      <h2>Triangulation</h2>
+      <select id="triAlgo">
+        <option value="greedy">Greedy</option>
+        <option value="hamilton">Hamilton</option>
+      </select>
+      <button id="runTri">Run triangulation</button>
+    </div>
+  </div>
+
+  <script src="src/state.js"></script>
+<script src="src/utils.js"></script>
+<script src="src/pointGen.js"></script>
+<script src="src/convexHull.js"></script>
+<script src="src/triangulation.js"></script>
+<script src="src/sketch.js"></script>
+
+</body>
+
 </html>
