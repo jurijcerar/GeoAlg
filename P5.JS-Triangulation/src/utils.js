@@ -41,3 +41,76 @@ function check_crossing(lines,triangulation){
   return true;
 }
 
+function get_min_E(){
+  var min = 1200;
+  var E,j;
+  for (var i = 0; i < points.length; i++ ){
+    if(min > points[i].x){
+      min = points[i].x;
+      E = points[i];
+      j = i;
+    }
+  }
+  points.splice(j, 1);
+  return E;
+}
+
+function get_max_E(){
+  var max = 0;
+  var E,j;
+  for (var i = 0; i < points.length; i++ ){
+    if(max < points[i].x){
+      max = points[i].x;
+      E = points[i];
+      j = i;
+    }
+  }
+  points.splice(j, 1);
+  return E;
+}
+
+function get_S1(){
+  var E = get_min_E();
+  var j;
+  var s1 = points[0];
+  var vy = createVector(0,1);
+  var minangle = angle(vy,s1);
+  for (var i = 1; i < points.length; i++){
+    var vs = points[i].copy().sub(E);
+    var newangle= angle(vy,vs);
+    if(newangle < minangle){
+      s1 = points[i];
+      j = i;
+      minangle = newangle;
+    }
+    else if(equals(newangle, minangle)){
+      if(euk_dist(E,s1) > euk_dist(E,points[i])){
+        s1 = points[i];
+        j = i;  
+      }
+    }
+  }
+  hull.push(E);
+  hull.push(s1);
+  points.splice(j,1);
+  points.push(E);
+  return E;
+}
+
+function orientation(p, q, r) {
+  return p5.Vector
+    .cross(q.copy().sub(p), r.copy().sub(p))
+    .z;
+}
+function distToLine(a, b, p) {
+  // distance from point p to line a-b
+  return abs(p5.Vector.cross(b.copy().sub(a), p.copy().sub(a)).z);
+}
+
+function side(a, b, p) {
+  // returns 1 if p is left of a-b, -1 if right, 0 if collinear
+  let val = p5.Vector.cross(b.copy().sub(a), p.copy().sub(a)).z;
+  if (val > 0) return 1;
+  if (val < 0) return -1;
+  return 0;
+}

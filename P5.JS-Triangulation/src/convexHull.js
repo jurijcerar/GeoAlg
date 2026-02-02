@@ -1,141 +1,154 @@
-function jarvis_march(){
-  var E = get_S1();
-  var min = 180;
-  var i;
-  var A,B;
-  while(!hull[hull.length-1].equals(E)){
-    min = 180;
-    var A = p5.Vector.sub(hull[hull.length-1], hull[hull.length-2]);
-    for (var j = 0; j < points.length; j++){
-      var B = p5.Vector.sub(points[j], hull[hull.length-1]);
-      var ang = angle(A,B);
-      if(ang < min){
-        i = j;
-        min = ang;
+function jarvis_march() {
+  hull = [];
+
+  // leftmost point
+  let start = points.reduce((a, b) =>
+    a.x < b.x ? a : b
+  );
+
+  let current = start;
+
+  do {
+    hull.push(current.copy());
+    let next = points[0];
+
+    for (let i = 1; i < points.length; i++) {
+      if (next === current) {
+        next = points[i];
+        continue;
+      }
+
+      let cross = orientation(current, next, points[i]);
+
+      // choose most counterclockwise
+      if (cross < 0 ||
+        (cross === 0 &&
+          euk_dist(current, points[i]) >
+          euk_dist(current, next))) {
+        next = points[i];
       }
     }
-    hull.push(points[i].copy());
-    points.splice(i,1);
-  }
+
+    current = next;
+
+  } while (!current.equals(start));
 }
 
-function grahangle(a,b){
-  var a =atan2(a.x-b.x,a.y-b.y);
-  if(a < 0){
-    a = a + 2*PI;
+
+function grahangle(a, b) {
+  var a = atan2(a.y - b.y, a.x - b.x);
+  if (a < 0) {
+    a = a + 2 * PI;
   }
   return a;
 }
 
-function grahamsort(a,b){
-  if(grahangle(b,points[0]) < grahangle(a,points[0])){
-    return 1;
-  }
-  else if(equals(grahangle(b,points[0]),grahangle(a,points[0]))){
-    if(euk_dist(points[0],a) > euk_dist(points[0],b)){
-      return 1;
-    }
-  }
-  return -1;
+function grahamsort(a, b) {
+  let angA = grahangle(a, points[0]);
+  let angB = grahangle(b, points[0]);
+
+  if (!equals(angA, angB)) return angA - angB;
+  return euk_dist(points[0], a) - euk_dist(points[0], b);
 }
 
-function grahams_scan(){
+
+function grahams_scan() {
   hull = [];
-  points.sort((a, b) => (a.x > b.x) ? 1 : -1);
+  points.sort((a, b) =>
+    a.y === b.y ? a.x - b.x : a.y - b.y
+  );
+
   var temp1 = points.slice(1);
   var temp2 = points.slice(0, 1);
   temp1.sort(grahamsort);
-  points = temp2.concat(temp1); 
+  points = temp2.concat(temp1);
   hull.push(points[0].copy());
   hull.push(points[1].copy());
   hull.push(points[2].copy());
 
-  for (var i = 3; i < points.length; i++){
-    var p1 = hull[hull.length-2].copy();
-    var p2 = hull[hull.length-1].copy();
+  for (var i = 3; i < points.length; i++) {
+    var p1 = hull[hull.length - 2].copy();
+    var p2 = hull[hull.length - 1].copy();
     var p3 = points[i].copy();
-    var U = p5.Vector.cross(p3.copy().sub(p1), (p2.copy().sub(p1))).z;
-    if(U <= 0){
-      while(hull.length > 1 && p5.Vector.cross(points[i].copy().sub(hull[hull.length-2]), ( hull[hull.length-1].copy().sub(hull[hull.length-2]))).z <= 0){
+    var U = p5.Vector
+      .cross(p2.copy().sub(p1), p3.copy().sub(p1))
+      .z;
+
+    if (U <= 0) {
+      while (
+        hull.length > 1 &&
+        p5.Vector.cross(
+          hull[hull.length - 1].copy().sub(hull[hull.length - 2]),
+          points[i].copy().sub(hull[hull.length - 2])
+        ).z <= 0
+      ) {
         hull.pop();
       }
+
     }
     hull.push(p3);
   }
 }
 
-function find_hull(s,a,b){
-  if (!Array.isArray(s) || !s.length) {
-    return;
-  }
-  var max = (1/2) * abs((a.x - s[0].x) * (b.y - a.y) - (a.x - b.x) * (s[0].y - a.y)); 
-  var c = s[0];
-  for (let i = 1; i < s.length; i++) {
-    var t = (1/2) * abs((a.x - s[i].x) * (b.y - a.y) - (a.x - b.x) * (s[i].y - a.y)); 
-    if(max < t){
-      max = t;
-      c = s[i];
+function find_hull(pointsSubset, a, b) {
+  if (!pointsSubset.length) return;
+
+  // 1️⃣ Find farthest point from line a-b
+  let maxDist = -1;
+  let c = null;
+  for (let p of pointsSubset) {
+    let d = distToLine(a, b, p);
+    if (d > maxDist) {
+      maxDist = d;
+      c = p;
     }
   }
-  var j = min(hull.indexOf(a),hull.indexOf(b));
-  temp1 = hull.slice(j+1);
-  temp2 = hull.slice(0,j+1);
-  temp2.push(c.copy());
-  hull = temp2.concat(temp1);
 
-  let z1 = [];
-  let z2 = [];
+  // 2️⃣ Insert c between a and b in hull
+  let idx = hull.indexOf(b);
+  hull.splice(idx, 0, c);
 
-  for (let i = 0; i < s.length; i++) {
-    var v1 = s[i].copy().sub(a);
-    var v2 = c.copy().sub(a);
-    let sign = v1.cross(v2).z;
-    if(sign < 0){
-      z1.push(s[i]);
-    }
-    else {
-      var v1 = s[i].copy().sub(c);
-      var v2 = b.copy().sub(c);
-      sign = v1.cross(v2).z;
-      if(sign < 0){
-        z2.push(s[i]);
-      }
-    }
+  // 3️⃣ Split remaining points into two subsets relative to new segments
+  let leftSet = [];
+  let rightSet = [];
+  for (let p of pointsSubset) {
+    if (p === c) continue;
+
+    if (side(a, c, p) === 1) leftSet.push(p);
+    else if (side(c, b, p) === 1) rightSet.push(p);
   }
-  
-  find_hull(z1,a,c);
-  find_hull(z2,c,b);
 
+  // 4️⃣ Recurse
+  find_hull(leftSet, a, c);
+  find_hull(rightSet, c, b);
 }
 
-function quick_hull(){
+function quick_hull() {
   hull = [];
-  var s1 = [];
-  var s2 = [];
-  var e1 = get_min_E();
-  var e2 = get_max_E();
-  hull.push(e1.copy());
-  hull.push(e2.copy());
-  var index = points.indexOf(e1);
-  points.splice(index, 1);
-  index = points.indexOf(e2);
-  points.splice(index, 1);
 
-  for (let i = 0; i < points.length; i++) {
-    var v1 = points[i].copy().sub(e1);
-    var v2 = e2.copy().sub(e1);
-    let sign = v1.cross(v2).z;
-    if(sign < 0){
-      s1.push(points[i]);
-    }
-    else if(sign > 0){
-      s2.push(points[i]);
-    }
+  // Find leftmost and rightmost points
+  let minX = points[0];
+  let maxX = points[0];
+  for (let p of points) {
+    if (p.x < minX.x) minX = p;
+    if (p.x > maxX.x) maxX = p;
   }
-  
-  find_hull(s1,e1,e2);
-  find_hull(s2,e2,e1);
 
-  hull.sort(grahamsort);
+  hull.push(minX);
+  hull.push(maxX);
 
+  // Split points into two sets: above and below line
+  let leftSet = [];
+  let rightSet = [];
+  for (let p of points) {
+    if (p === minX || p === maxX) continue;
+
+    if (side(minX, maxX, p) === 1) leftSet.push(p);
+    else if (side(minX, maxX, p) === -1) rightSet.push(p);
+  }
+
+  find_hull(leftSet, minX, maxX);
+  find_hull(rightSet, maxX, minX);
+
+  return hull; // ordered convex hull
 }

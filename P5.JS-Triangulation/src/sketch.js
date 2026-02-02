@@ -10,7 +10,7 @@ function setup() {
 }
 
 function run_hull() {
-  clear();
+  //clear();
   hull = [];
 
   let algo = document.getElementById("hullAlgo").value;
@@ -22,6 +22,10 @@ function run_hull() {
   for (let i = 1; i < hull.length; i++) {
     line(hull[i-1].x, hull[i-1].y, hull[i].x, hull[i].y);
   }
+
+  line(hull[hull.length-1].x, hull[hull.length-1].y,
+     hull[0].x, hull[0].y);
+
 }
 
 function run_triangulation() {
