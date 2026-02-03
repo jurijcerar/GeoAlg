@@ -5,27 +5,33 @@ function setup() {
   let c = createCanvas(w, h);
   c.parent("canvas-container");
 
-  state.slider = createSlider(0, 0, 0, 1); // min, max, initial, step
+  state.slider = createSlider(0, 0, 0, 1);
   state.slider.parent(document.getElementById("controls"));
+  
+  state.slider.input(() => redraw());
+  
+  noLoop();
+
+  document.querySelector('input[name="mode"][value="none"]').checked = true;
+  state.mode = "none";
 
   document.getElementById("evenBtn").onclick = even_dist;
   document.getElementById("gaussBtn").onclick = gauss_dist;
+  
   document.querySelectorAll('input[name="mode"]').forEach(radio => {
-  radio.onchange = () => {
-    state.mode = radio.value;
-    recompute();
-  };
+    radio.onchange = () => {
+      state.mode = radio.value;
+      recompute();
+    };
+  });
 
   document.getElementById("hullAlgo").onchange = () => {
-  if (state.mode === "hull") recompute();
-};
+    if (state.mode === "hull") recompute();
+  };
 
-document.getElementById("triAlgo").onchange = () => {
-  if (state.mode === "tri") recompute();
-};
-
-});
-
+  document.getElementById("triAlgo").onchange = () => {
+    if (state.mode === "tri") recompute();
+  };
 }
 
 function updateUI() {
@@ -53,6 +59,8 @@ function recompute() {
 
   state.slider.attribute("max", state.edges.length);
   state.slider.value(state.edges.length);
+
+  redraw();
 }
 
 function draw() {

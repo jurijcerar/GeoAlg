@@ -3,8 +3,8 @@ function equals(a, b) {
 }
 
 function addEdge(a, b) {
-    state.edges.push({ a: a.copy(), b: b.copy() });
-    console.log(`Edge added: (${a.x},${a.y}) -> (${b.x},${b.y})`);
+    state.edges.push({ a: a, b: b });
+    //console.log(`Edge added: (${a.x},${a.y}) -> (${b.x},${b.y})`);
 }
 
 function draw_points() {
