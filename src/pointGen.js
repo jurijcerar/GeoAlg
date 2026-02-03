@@ -9,6 +9,7 @@ state.slider.value(0);
     let p = createVector(random(width), random(height));
     state.points.push(p);
   }
+  recompute();
 }
 
 function gauss_dist() {
@@ -26,5 +27,6 @@ state.slider.value(0);
       state.points.push(p);
     } else i--;
   }
+  recompute();
 }
 

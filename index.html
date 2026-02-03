@@ -30,16 +30,37 @@
         <option value="jarvis">Jarvis march</option>
         <option value="quick">Quick Hull</option>
       </select>
-      <button id="runHull">Run convex hull</button>
 
       <hr>
 
       <h2>Triangulation</h2>
       <select id="triAlgo">
         <option value="greedy">Greedy</option>
-        <option value="bw">Bowyer–Watson</option>
+        <option value="bw">Bowyer-Watson</option>
       </select>
-      <button id="runTri">Run triangulation</button>
+
+      <hr>
+
+      <h2>Mode</h2>
+
+<div class="mode-toggle">
+  <label>
+    <input type="radio" name="mode" value="none" checked>
+    <span>Off</span>
+  </label>
+
+  <label>
+    <input type="radio" name="mode" value="hull">
+    <span>Convex Hull</span>
+  </label>
+
+  <label>
+    <input type="radio" name="mode" value="tri">
+    <span>Triangulation</span>
+  </label>
+</div>
+
+
     </div>
   </div>
 

@@ -1,5 +1,8 @@
 function setup() {
-  let c = createCanvas(1200, 800);
+  let w = document.getElementById("canvas-container").offsetWidth;
+  let h = window.innerHeight * 0.9;
+
+  let c = createCanvas(w, h);
   c.parent("canvas-container");
 
   state.slider = createSlider(0, 0, 0, 1); // min, max, initial, step
@@ -7,30 +10,46 @@ function setup() {
 
   document.getElementById("evenBtn").onclick = even_dist;
   document.getElementById("gaussBtn").onclick = gauss_dist;
-  document.getElementById("runHull").onclick = run_hull;
-  document.getElementById("runTri").onclick = run_triangulation;
+  document.querySelectorAll('input[name="mode"]').forEach(radio => {
+  radio.onchange = () => {
+    state.mode = radio.value;
+    recompute();
+  };
+
+  document.getElementById("hullAlgo").onchange = () => {
+  if (state.mode === "hull") recompute();
+};
+
+document.getElementById("triAlgo").onchange = () => {
+  if (state.mode === "tri") recompute();
+};
+
+});
+
+}
+
+function updateUI() {
+  document.getElementById("hullAlgo").disabled = state.mode !== "hull";
+  document.getElementById("triAlgo").disabled = state.mode !== "tri";
 }
 
 
-function run_hull() {
-
+function recompute() {
+  updateUI();
   state.edges = [];
 
-  let algo = document.getElementById("hullAlgo").value;
-  if (algo === "graham") grahams_scan();
-  else if (algo === "quick") quick_hull();
-  else jarvis_march();
+  if (state.mode === "hull") {
+    let algo = document.getElementById("hullAlgo").value;
+    if (algo === "graham") grahams_scan();
+    else if (algo === "quick") quick_hull();
+    else jarvis_march();
+  }
 
-  state.slider.attribute("max", state.edges.length);
-  state.slider.value(state.edges.length);
-}
-
-function run_triangulation() {
-  state.edges = [];
-  let algo = document.getElementById("triAlgo").value;
-
-  if (algo === "greedy") greedy_triangulation();
-  else bowyer_watson();
+  else if (state.mode === "tri") {
+    let algo = document.getElementById("triAlgo").value;
+    if (algo === "greedy") greedy_triangulation();
+    else bowyer_watson();
+  }
 
   state.slider.attribute("max", state.edges.length);
   state.slider.value(state.edges.length);

@@ -1,5 +1,6 @@
 let state = {
   points: [],
   edges: [],
-  slider: null
+  slider: null,
+  mode: "none"
 };
