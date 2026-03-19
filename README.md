@@ -1,4 +1,4 @@
-# GeoAlg — Computational Geometry Visualizer
+# Computational Geometry Visualizer
 
 An interactive visualizer for convex hull and triangulation algorithms, built with vanilla JS and the Canvas 2D API. No frameworks, no dependencies.
 
