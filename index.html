@@ -1,79 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <meta charset="utf-8" />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Geometry Algorithms</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 </head>
-
 <body>
   <div id="app">
-    <div id="canvas-container"></div>
-
-    <div id="controls">
-      <h2>Point Generation</h2>
-      <label>
-        Number of points
-        <input id="numPoints" type="number" value="50" min="3">
-      </label>
-
-      <button id="evenBtn">Even distribution</button>
-      <button id="gaussBtn">Gaussian distribution</button>
-
-      <hr>
-
-      <h2>Convex Hull</h2>
-      <select id="hullAlgo">
-        <option value="graham">Graham scan</option>
-        <option value="jarvis">Jarvis march</option>
-        <option value="quick">Quick Hull</option>
-      </select>
-
-      <hr>
-
-      <h2>Triangulation</h2>
-      <select id="triAlgo">
-        <option value="greedy">Greedy</option>
-        <option value="bw">Bowyer-Watson</option>
-      </select>
-
-      <hr>
-
-      <h2>Mode</h2>
-
-<div class="mode-toggle">
-  <label>
-    <input type="radio" name="mode" value="none" checked>
-    <span>Off</span>
-  </label>
-
-  <label>
-    <input type="radio" name="mode" value="hull">
-    <span>Convex Hull</span>
-  </label>
-
-  <label>
-    <input type="radio" name="mode" value="tri">
-    <span>Triangulation</span>
-  </label>
-</div>
-
-
+    <div id="canvas-container">
+      <canvas id="main-canvas"></canvas>
+      <div id="step-badge"></div>
     </div>
+
+    <aside id="controls">
+
+      <!-- Mobile-only: always-visible collapsed strip -->
+      <div id="mobile-toolbar">
+        <div class="mode-toggle">
+          <label><input type="radio" name="mode-m" value="none" checked><span>Off</span></label>
+          <label><input type="radio" name="mode-m" value="hull"><span>Hull</span></label>
+          <label><input type="radio" name="mode-m" value="tri"><span>Tri</span></label>
+        </div>
+        <input id="numPointsM" type="number" value="40" min="3" max="300" placeholder="pts">
+        <div class="gen-btns">
+          <button id="evenBtnM" title="Uniform">&#9632;</button>
+          <button id="gaussBtnM" title="Gaussian">&#9678;</button>
+        </div>
+      </div>
+
+      <!-- Desktop header -->
+      <header>
+        <div id="logo">GEO<span>ALG</span></div>
+        <p id="subtitle">Computational Geometry</p>
+      </header>
+
+      <section id="pointgen-section">
+        <label class="ctrl-label">Points</label>
+        <input id="numPoints" type="number" value="40" min="3" max="300">
+        <div class="btn-row">
+          <button id="evenBtn">Uniform</button>
+          <button id="gaussBtn">Gaussian</button>
+        </div>
+      </section>
+
+      <hr>
+
+      <section>
+        <label class="ctrl-label">Mode</label>
+        <div class="mode-toggle">
+          <label><input type="radio" name="mode" value="none" checked><span>Off</span></label>
+          <label><input type="radio" name="mode" value="hull"><span>Hull</span></label>
+          <label><input type="radio" name="mode" value="tri"><span>Tri</span></label>
+        </div>
+      </section>
+
+      <section id="hull-section">
+        <label class="ctrl-label">Hull Algorithm</label>
+        <div class="algo-picker" id="hullPicker">
+          <button class="algo-btn active" data-algo="jarvis">
+            <span class="algo-name">Jarvis March</span>
+            <span class="algo-info">Gift wrapping</span>
+          </button>
+          <button class="algo-btn" data-algo="graham">
+            <span class="algo-name">Graham Scan</span>
+            <span class="algo-info">Polar sort</span>
+          </button>
+          <button class="algo-btn" data-algo="quick">
+            <span class="algo-name">Quick Hull</span>
+            <span class="algo-info">Divide and conquer</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="tri-section">
+        <label class="ctrl-label">Triangulation Algorithm</label>
+        <div class="algo-picker" id="triPicker">
+          <button class="algo-btn active" data-algo="greedy">
+            <span class="algo-name">Greedy</span>
+            <span class="algo-info">Shortest edges first</span>
+          </button>
+          <button class="algo-btn" data-algo="bw">
+            <span class="algo-name">Bowyer-Watson</span>
+            <span class="algo-info">Delaunay circumcircle</span>
+          </button>
+        </div>
+      </section>
+
+      <hr>
+
+      <section id="slider-section">
+        <label class="ctrl-label">
+          Step playback
+          <span id="step-count">--</span>
+        </label>
+        <input id="stepSlider" type="range" min="0" max="0" value="0">
+        <div class="btn-row">
+          <button id="playBtn">Play</button>
+          <button id="resetBtn">Reset</button>
+        </div>
+      </section>
+
+    </aside>
   </div>
 
   <script src="src/state.js"></script>
-  <script src="src/sketch.js"></script> 
-  <script src="src/pointGen.js"></script>
-  <script src="src/convex/jarvis.js"></script>
-  <script src="src/convex/graham.js"></script>
-  <script src="src/convex/quick.js"></script>
-  <script src="src/triangulation/greedy.js"></script>
-  <script src="src/triangulation/bw.js"></script>
   <script src="src/utils.js"></script>
-
+  <script src="src/pointGen.js"></script>
+  <script src="src/hull/jarvis.js"></script>
+  <script src="src/hull/graham.js"></script>
+  <script src="src/hull/quick.js"></script>
+  <script src="src/tri/greedy.js"></script>
+  <script src="src/tri/bw.js"></script>
+  <script src="src/sketch.js"></script>
 </body>
-
 </html>
